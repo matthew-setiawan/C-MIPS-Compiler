@@ -1,0 +1,3496 @@
+Nonterminals useless in grammar
+
+   enum_definition
+   logical_expression
+
+
+State 206 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: ROOT $end
+
+    1 ROOT: begin_comp
+
+    2 global_declaration: enumerator
+    3                   | function_definition
+    4                   | declaration
+
+    5 postfix_expression: primary_expression
+    6                   | postfix_expression DEF_PLUS_PLUS
+    7                   | postfix_expression DEF_MIN_MIN
+    8                   | postfix_expression DEF_OP_PAREN argument_list DEF_CLO_PAREN
+    9                   | postfix_expression DEF_ARR_L assignment_expression DEF_ARR_R
+   10                   | postfix_expression DEF_OP_PAREN DEF_CLO_PAREN
+
+   11 function_definition: TYPE DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN compound_statement
+
+   12 declaration: TYPE DEF_END_LINE
+   13            | TYPE start_dec_list DEF_END_LINE
+
+   14 declaration_list: declaration
+   15                 | declaration_list declaration
+
+   16 initialisation_list: assignment_expression
+   17                    | initialisation_list DEF_COMM assignment_expression
+
+   18 parameter_declaration: TYPE declarator
+
+   19 parameter_list: parameter_declaration
+   20               | parameter_list DEF_COMM parameter_declaration
+   21               | %empty
+
+   22 declarator: DEF_IDENT
+   23           | DEF_IDENT DEF_ARR_L DEF_ARR_R
+   24           | DEF_IDENT DEF_ARR_L assignment_expression DEF_ARR_R
+   25           | DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN
+
+   26 specify_decl: declarator
+   27             | declarator DEF_EQ DEF_OP_FUNC DEF_CLO_FUNC
+   28             | declarator DEF_EQ DEF_OP_FUNC initialisation_list DEF_CLO_FUNC
+   29             | declarator DEF_EQ assignment_expression
+
+   30 start_dec_list: specify_decl
+   31               | start_dec_list DEF_COMM specify_decl
+
+   32 enumerator: TYPE DEF_IDENT DEF_OP_FUNC enumerator_list DEF_CLO_FUNC DEF_END_LINE
+
+   33 primary_expression: DEF_I_EL
+   34                   | DEF_F_VAL
+   35                   | DEF_CH_EL
+   36                   | DEF_D_EL
+   37                   | DEF_U_EL
+   38                   | DEF_IDENT
+   39                   | DEF_OP_PAREN assignment_expression DEF_CLO_PAREN
+   40                   | DEF_SZ DEF_OP_PAREN TYPE DEF_CLO_PAREN
+   41                   | DEF_SZ DEF_OP_PAREN DEF_IDENT DEF_CLO_PAREN
+
+   42 enumerator_list: enumerator_initialisation
+   43                | enumerator_list DEF_COMM enumerator_initialisation
+
+   44 enumerator_initialisation: enumerator_declarator DEF_EQ assignment_expression
+   45                          | enumerator_declarator
+
+   46 enumerator_declarator: DEF_IDENT
+
+   47 unary_expression: postfix_expression
+   48                 | DEF_TIMES unary_expression
+   49                 | DEF_SUB unary_expression
+   50                 | DEF_AND unary_expression
+   51                 | DEF_PLUS_PLUS unary_expression
+   52                 | DEF_MIN_MIN unary_expression
+
+   53 multiply_expression: unary_expression
+   54                    | multiply_expression DEF_TIMES unary_expression
+   55                    | multiply_expression DEF_FRACT postfix_expression
+
+   56 add_expression: multiply_expression
+   57               | add_expression DEF_ADD multiply_expression
+   58               | add_expression DEF_SUB multiply_expression
+
+   59 bitwise_shift_expression: add_expression
+   60                         | bitwise_shift_expression DEF_LSL add_expression
+   61                         | bitwise_shift_expression DEF_LSR add_expression
+
+   62 compare_expression: bitwise_shift_expression
+   63                   | compare_expression DEF_SMALLER bitwise_shift_expression
+   64                   | compare_expression DEF_LEQ bitwise_shift_expression
+   65                   | compare_expression DEF_LARGER bitwise_shift_expression
+   66                   | compare_expression DEF_GEQ bitwise_shift_expression
+
+   67 equal_expression: compare_expression
+   68                 | equal_expression DEF_DOUB_EQ compare_expression
+   69                 | equal_expression DEF_NE compare_expression
+
+   70 log_bitwise: equal_expression
+   71            | log_bitwise DEF_AND equal_expression
+   72            | log_bitwise DEF_XOR equal_expression
+   73            | log_bitwise DEF_OR equal_expression
+
+   74 parse_l_ANDOR: log_bitwise
+   75              | parse_l_ANDOR DEF_TWO_AND log_bitwise
+   76              | parse_l_ANDOR DEF_TWO_OR log_bitwise
+
+   77 assignment_expression: parse_l_ANDOR
+   78                      | unary_expression DEF_EQ assignment_expression
+   79                      | unary_expression DEF_PEQL assignment_expression
+   80                      | unary_expression DEF_MEQL assignment_expression
+
+   81 statement_list: statement
+   82               | statement_list statement
+
+   83 argument_list: assignment_expression
+   84              | argument_list DEF_COMM assignment_expression
+
+   85 statement: jump_statement
+   86          | compound_statement
+   87          | expression_statement
+   88          | control_flow_logic
+   89          | labeled_statement
+
+   90 jump_statement: DEF_R_OP DEF_END_LINE
+   91               | DEF_B DEF_END_LINE
+   92               | DEF_CNT DEF_END_LINE
+   93               | DEF_R_OP assignment_expression DEF_END_LINE
+
+   94 compound_statement: DEF_OP_FUNC DEF_CLO_FUNC
+   95                   | DEF_OP_FUNC statement_list DEF_CLO_FUNC
+   96                   | DEF_OP_FUNC declaration_list DEF_CLO_FUNC
+   97                   | DEF_OP_FUNC declaration_list statement_list DEF_CLO_FUNC
+
+   98 begin_comp: global_declaration
+   99           | begin_comp global_declaration
+
+  100 expression_statement: assignment_expression DEF_END_LINE
+  101                     | DEF_END_LINE
+
+  102 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+  103                   | DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement DEF_ELS statement
+  104                   | DEF_SWT DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+  105                   | DEF_WH_OP DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+  106                   | DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+  107 labeled_statement: DEF_SEL_STATE assignment_expression DEF_COL statement
+  108                  | DEF_NORM DEF_COL statement
+
+  109 TYPE: DEF_INT
+  110     | DEF_EMPTY
+  111     | DEF_UNS DEF_INT
+  112     | DEF_ENUMERATOR
+  113     | DEF_LETTER
+  114     | DEF_NUMBER
+  115     | TYPE DEF_TIMES
+  116     | DEF_FLT
+  117     | DEF_UNS
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+DEF_OP_PAREN (258) 8 10 11 25 39 40 41 102 103 104 105 106
+DEF_CLO_PAREN (259) 8 10 11 25 39 40 41 102 103 104 105 106
+DEF_SWT (260) 104
+DEF_F_VAL (261) 34
+DEF_F_OP (262) 106
+DEF_ARR_L (263) 9 23 24
+DEF_ARR_R (264) 9 23 24
+DEF_COL (265) 107 108
+DEF_END_LINE (266) 12 13 32 90 91 92 93 100 101 106
+DEF_COMM (267) 17 20 31 43 84
+DEF_FLT (268) 116
+DEF_INT (269) 109 111
+DEF_TWO_AND (270) 75
+DEF_TWO_OR (271) 76
+DEF_LSR (272) 61
+DEF_LSL (273) 60
+DEF_TIMES (274) 48 54 115
+DEF_ADD (275) 57
+DEF_FRACT (276) 55
+DEF_SUB (277) 49 58
+DEF_EQ (278) 27 28 29 44 78
+DEF_NUMBER (279) 114
+DEF_LETTER (280) 113
+DEF_UNS (281) 111 117
+DEF_PEQL (282) 79
+DEF_PLUS_PLUS (283) 6 51
+DEF_MEQL (284) 80
+DEF_AND (285) 50 71
+DEF_ENUMERATOR (286) 112
+DEF_OR (287) 73
+DEF_XOR (288) 72
+DEF_I_EL (289) 33
+DEF_D_EL (290) 36
+DEF_U_EL (291) 37
+DEF_CH_EL (292) 35
+DEF_OP_FUNC (293) 27 28 32 94 95 96 97
+DEF_IF (294) 102 103
+DEF_ELS (295) 103
+DEF_WH_OP (296) 105
+DEF_CNT (297) 92
+DEF_B (298) 91
+DEF_R_OP (299) 90 93
+DEF_NORM (300) 108
+DEF_SEL_STATE (301) 107
+DEF_CLO_FUNC (302) 27 28 32 94 95 96 97
+DEF_LARGER (303) 65
+DEF_GEQ (304) 66
+DEF_SMALLER (305) 63
+DEF_IDENT (306) 11 22 23 24 25 32 38 41 46
+DEF_SZ (307) 40 41
+DEF_EMPTY (308) 110
+DEF_LEQ (309) 64
+DEF_DOUB_EQ (310) 68
+DEF_NE (311) 69
+DEF_MIN_MIN (312) 7 52
+
+
+Nonterminals, with rules where they appear
+
+$accept (58)
+    on left: 0
+ROOT (59)
+    on left: 1, on right: 0
+global_declaration (60)
+    on left: 2 3 4, on right: 98 99
+postfix_expression (61)
+    on left: 5 6 7 8 9 10, on right: 6 7 8 9 10 47 55
+function_definition (62)
+    on left: 11, on right: 3
+declaration (63)
+    on left: 12 13, on right: 4 14 15
+declaration_list (64)
+    on left: 14 15, on right: 15 96 97
+initialisation_list (65)
+    on left: 16 17, on right: 17 28
+parameter_declaration (66)
+    on left: 18, on right: 19 20
+parameter_list (67)
+    on left: 19 20 21, on right: 11 20 25
+declarator (68)
+    on left: 22 23 24 25, on right: 18 26 27 28 29
+specify_decl (69)
+    on left: 26 27 28 29, on right: 30 31
+start_dec_list (70)
+    on left: 30 31, on right: 13 31
+enumerator (71)
+    on left: 32, on right: 2
+primary_expression (72)
+    on left: 33 34 35 36 37 38 39 40 41, on right: 5
+enumerator_list (73)
+    on left: 42 43, on right: 32 43
+enumerator_initialisation (74)
+    on left: 44 45, on right: 42 43
+enumerator_declarator (75)
+    on left: 46, on right: 44 45
+unary_expression (76)
+    on left: 47 48 49 50 51 52, on right: 48 49 50 51 52 53 54 78 79
+    80
+multiply_expression (77)
+    on left: 53 54 55, on right: 54 55 56 57 58
+add_expression (78)
+    on left: 56 57 58, on right: 57 58 59 60 61
+bitwise_shift_expression (79)
+    on left: 59 60 61, on right: 60 61 62 63 64 65 66
+compare_expression (80)
+    on left: 62 63 64 65 66, on right: 63 64 65 66 67 68 69
+equal_expression (81)
+    on left: 67 68 69, on right: 68 69 70 71 72 73
+log_bitwise (82)
+    on left: 70 71 72 73, on right: 71 72 73 74 75 76
+parse_l_ANDOR (83)
+    on left: 74 75 76, on right: 75 76 77
+assignment_expression (84)
+    on left: 77 78 79 80, on right: 9 16 17 24 29 39 44 78 79 80 83
+    84 93 100 102 103 104 105 106 107
+statement_list (85)
+    on left: 81 82, on right: 82 95 97
+argument_list (86)
+    on left: 83 84, on right: 8 84
+statement (87)
+    on left: 85 86 87 88 89, on right: 81 82 102 103 104 105 106 107
+    108
+jump_statement (88)
+    on left: 90 91 92 93, on right: 85
+compound_statement (89)
+    on left: 94 95 96 97, on right: 11 86
+begin_comp (90)
+    on left: 98 99, on right: 1 99
+expression_statement (91)
+    on left: 100 101, on right: 87
+control_flow_logic (92)
+    on left: 102 103 104 105 106, on right: 88
+labeled_statement (93)
+    on left: 107 108, on right: 89
+TYPE (94)
+    on left: 109 110 111 112 113 114 115 116 117, on right: 11 12 13
+    18 32 40 115
+
+
+State 0
+
+    0 $accept: . ROOT $end
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_EMPTY       shift, and go to state 7
+
+    ROOT                 go to state 8
+    global_declaration   go to state 9
+    function_definition  go to state 10
+    declaration          go to state 11
+    enumerator           go to state 12
+    begin_comp           go to state 13
+    TYPE                 go to state 14
+
+
+State 1
+
+  116 TYPE: DEF_FLT .
+
+    $default  reduce using rule 116 (TYPE)
+
+
+State 2
+
+  109 TYPE: DEF_INT .
+
+    $default  reduce using rule 109 (TYPE)
+
+
+State 3
+
+  114 TYPE: DEF_NUMBER .
+
+    $default  reduce using rule 114 (TYPE)
+
+
+State 4
+
+  113 TYPE: DEF_LETTER .
+
+    $default  reduce using rule 113 (TYPE)
+
+
+State 5
+
+  111 TYPE: DEF_UNS . DEF_INT
+  117     | DEF_UNS .
+
+    DEF_INT  shift, and go to state 15
+
+    $default  reduce using rule 117 (TYPE)
+
+
+State 6
+
+  112 TYPE: DEF_ENUMERATOR .
+
+    $default  reduce using rule 112 (TYPE)
+
+
+State 7
+
+  110 TYPE: DEF_EMPTY .
+
+    $default  reduce using rule 110 (TYPE)
+
+
+State 8
+
+    0 $accept: ROOT . $end
+
+    $end  shift, and go to state 16
+
+
+State 9
+
+   98 begin_comp: global_declaration .
+
+    $default  reduce using rule 98 (begin_comp)
+
+
+State 10
+
+    3 global_declaration: function_definition .
+
+    $default  reduce using rule 3 (global_declaration)
+
+
+State 11
+
+    4 global_declaration: declaration .
+
+    $default  reduce using rule 4 (global_declaration)
+
+
+State 12
+
+    2 global_declaration: enumerator .
+
+    $default  reduce using rule 2 (global_declaration)
+
+
+State 13
+
+    1 ROOT: begin_comp .
+   99 begin_comp: begin_comp . global_declaration
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_EMPTY       shift, and go to state 7
+
+    $default  reduce using rule 1 (ROOT)
+
+    global_declaration   go to state 17
+    function_definition  go to state 10
+    declaration          go to state 11
+    enumerator           go to state 12
+    TYPE                 go to state 14
+
+
+State 14
+
+   11 function_definition: TYPE . DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN compound_statement
+   12 declaration: TYPE . DEF_END_LINE
+   13            | TYPE . start_dec_list DEF_END_LINE
+   32 enumerator: TYPE . DEF_IDENT DEF_OP_FUNC enumerator_list DEF_CLO_FUNC DEF_END_LINE
+  115 TYPE: TYPE . DEF_TIMES
+
+    DEF_END_LINE  shift, and go to state 18
+    DEF_TIMES     shift, and go to state 19
+    DEF_IDENT     shift, and go to state 20
+
+    declarator      go to state 21
+    specify_decl    go to state 22
+    start_dec_list  go to state 23
+
+
+State 15
+
+  111 TYPE: DEF_UNS DEF_INT .
+
+    $default  reduce using rule 111 (TYPE)
+
+
+State 16
+
+    0 $accept: ROOT $end .
+
+    $default  accept
+
+
+State 17
+
+   99 begin_comp: begin_comp global_declaration .
+
+    $default  reduce using rule 99 (begin_comp)
+
+
+State 18
+
+   12 declaration: TYPE DEF_END_LINE .
+
+    $default  reduce using rule 12 (declaration)
+
+
+State 19
+
+  115 TYPE: TYPE DEF_TIMES .
+
+    $default  reduce using rule 115 (TYPE)
+
+
+State 20
+
+   11 function_definition: TYPE DEF_IDENT . DEF_OP_PAREN parameter_list DEF_CLO_PAREN compound_statement
+   22 declarator: DEF_IDENT .
+   23           | DEF_IDENT . DEF_ARR_L DEF_ARR_R
+   24           | DEF_IDENT . DEF_ARR_L assignment_expression DEF_ARR_R
+   25           | DEF_IDENT . DEF_OP_PAREN parameter_list DEF_CLO_PAREN
+   32 enumerator: TYPE DEF_IDENT . DEF_OP_FUNC enumerator_list DEF_CLO_FUNC DEF_END_LINE
+
+    DEF_OP_PAREN  shift, and go to state 24
+    DEF_ARR_L     shift, and go to state 25
+    DEF_OP_FUNC   shift, and go to state 26
+
+    $default  reduce using rule 22 (declarator)
+
+
+State 21
+
+   26 specify_decl: declarator .
+   27             | declarator . DEF_EQ DEF_OP_FUNC DEF_CLO_FUNC
+   28             | declarator . DEF_EQ DEF_OP_FUNC initialisation_list DEF_CLO_FUNC
+   29             | declarator . DEF_EQ assignment_expression
+
+    DEF_EQ  shift, and go to state 27
+
+    $default  reduce using rule 26 (specify_decl)
+
+
+State 22
+
+   30 start_dec_list: specify_decl .
+
+    $default  reduce using rule 30 (start_dec_list)
+
+
+State 23
+
+   13 declaration: TYPE start_dec_list . DEF_END_LINE
+   31 start_dec_list: start_dec_list . DEF_COMM specify_decl
+
+    DEF_END_LINE  shift, and go to state 28
+    DEF_COMM      shift, and go to state 29
+
+
+State 24
+
+   11 function_definition: TYPE DEF_IDENT DEF_OP_PAREN . parameter_list DEF_CLO_PAREN compound_statement
+   25 declarator: DEF_IDENT DEF_OP_PAREN . parameter_list DEF_CLO_PAREN
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_EMPTY       shift, and go to state 7
+
+    $default  reduce using rule 21 (parameter_list)
+
+    parameter_declaration  go to state 30
+    parameter_list         go to state 31
+    TYPE                   go to state 32
+
+
+State 25
+
+   23 declarator: DEF_IDENT DEF_ARR_L . DEF_ARR_R
+   24           | DEF_IDENT DEF_ARR_L . assignment_expression DEF_ARR_R
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_ARR_R      shift, and go to state 35
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 57
+
+
+State 26
+
+   32 enumerator: TYPE DEF_IDENT DEF_OP_FUNC . enumerator_list DEF_CLO_FUNC DEF_END_LINE
+
+    DEF_IDENT  shift, and go to state 58
+
+    enumerator_list            go to state 59
+    enumerator_initialisation  go to state 60
+    enumerator_declarator      go to state 61
+
+
+State 27
+
+   27 specify_decl: declarator DEF_EQ . DEF_OP_FUNC DEF_CLO_FUNC
+   28             | declarator DEF_EQ . DEF_OP_FUNC initialisation_list DEF_CLO_FUNC
+   29             | declarator DEF_EQ . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 62
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 63
+
+
+State 28
+
+   13 declaration: TYPE start_dec_list DEF_END_LINE .
+
+    $default  reduce using rule 13 (declaration)
+
+
+State 29
+
+   31 start_dec_list: start_dec_list DEF_COMM . specify_decl
+
+    DEF_IDENT  shift, and go to state 64
+
+    declarator    go to state 21
+    specify_decl  go to state 65
+
+
+State 30
+
+   19 parameter_list: parameter_declaration .
+
+    $default  reduce using rule 19 (parameter_list)
+
+
+State 31
+
+   11 function_definition: TYPE DEF_IDENT DEF_OP_PAREN parameter_list . DEF_CLO_PAREN compound_statement
+   20 parameter_list: parameter_list . DEF_COMM parameter_declaration
+   25 declarator: DEF_IDENT DEF_OP_PAREN parameter_list . DEF_CLO_PAREN
+
+    DEF_CLO_PAREN  shift, and go to state 66
+    DEF_COMM       shift, and go to state 67
+
+
+State 32
+
+   18 parameter_declaration: TYPE . declarator
+  115 TYPE: TYPE . DEF_TIMES
+
+    DEF_TIMES  shift, and go to state 19
+    DEF_IDENT  shift, and go to state 64
+
+    declarator  go to state 68
+
+
+State 33
+
+   39 primary_expression: DEF_OP_PAREN . assignment_expression DEF_CLO_PAREN
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 69
+
+
+State 34
+
+   34 primary_expression: DEF_F_VAL .
+
+    $default  reduce using rule 34 (primary_expression)
+
+
+State 35
+
+   23 declarator: DEF_IDENT DEF_ARR_L DEF_ARR_R .
+
+    $default  reduce using rule 23 (declarator)
+
+
+State 36
+
+   48 unary_expression: DEF_TIMES . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 70
+
+
+State 37
+
+   49 unary_expression: DEF_SUB . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 71
+
+
+State 38
+
+   51 unary_expression: DEF_PLUS_PLUS . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 72
+
+
+State 39
+
+   50 unary_expression: DEF_AND . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 73
+
+
+State 40
+
+   33 primary_expression: DEF_I_EL .
+
+    $default  reduce using rule 33 (primary_expression)
+
+
+State 41
+
+   36 primary_expression: DEF_D_EL .
+
+    $default  reduce using rule 36 (primary_expression)
+
+
+State 42
+
+   37 primary_expression: DEF_U_EL .
+
+    $default  reduce using rule 37 (primary_expression)
+
+
+State 43
+
+   35 primary_expression: DEF_CH_EL .
+
+    $default  reduce using rule 35 (primary_expression)
+
+
+State 44
+
+   38 primary_expression: DEF_IDENT .
+
+    $default  reduce using rule 38 (primary_expression)
+
+
+State 45
+
+   40 primary_expression: DEF_SZ . DEF_OP_PAREN TYPE DEF_CLO_PAREN
+   41                   | DEF_SZ . DEF_OP_PAREN DEF_IDENT DEF_CLO_PAREN
+
+    DEF_OP_PAREN  shift, and go to state 74
+
+
+State 46
+
+   52 unary_expression: DEF_MIN_MIN . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 75
+
+
+State 47
+
+    6 postfix_expression: postfix_expression . DEF_PLUS_PLUS
+    7                   | postfix_expression . DEF_MIN_MIN
+    8                   | postfix_expression . DEF_OP_PAREN argument_list DEF_CLO_PAREN
+    9                   | postfix_expression . DEF_ARR_L assignment_expression DEF_ARR_R
+   10                   | postfix_expression . DEF_OP_PAREN DEF_CLO_PAREN
+   47 unary_expression: postfix_expression .
+
+    DEF_OP_PAREN   shift, and go to state 76
+    DEF_ARR_L      shift, and go to state 77
+    DEF_PLUS_PLUS  shift, and go to state 78
+    DEF_MIN_MIN    shift, and go to state 79
+
+    $default  reduce using rule 47 (unary_expression)
+
+
+State 48
+
+    5 postfix_expression: primary_expression .
+
+    $default  reduce using rule 5 (postfix_expression)
+
+
+State 49
+
+   53 multiply_expression: unary_expression .
+   78 assignment_expression: unary_expression . DEF_EQ assignment_expression
+   79                      | unary_expression . DEF_PEQL assignment_expression
+   80                      | unary_expression . DEF_MEQL assignment_expression
+
+    DEF_EQ    shift, and go to state 80
+    DEF_PEQL  shift, and go to state 81
+    DEF_MEQL  shift, and go to state 82
+
+    $default  reduce using rule 53 (multiply_expression)
+
+
+State 50
+
+   54 multiply_expression: multiply_expression . DEF_TIMES unary_expression
+   55                    | multiply_expression . DEF_FRACT postfix_expression
+   56 add_expression: multiply_expression .
+
+    DEF_TIMES  shift, and go to state 83
+    DEF_FRACT  shift, and go to state 84
+
+    $default  reduce using rule 56 (add_expression)
+
+
+State 51
+
+   57 add_expression: add_expression . DEF_ADD multiply_expression
+   58               | add_expression . DEF_SUB multiply_expression
+   59 bitwise_shift_expression: add_expression .
+
+    DEF_ADD  shift, and go to state 85
+    DEF_SUB  shift, and go to state 86
+
+    $default  reduce using rule 59 (bitwise_shift_expression)
+
+
+State 52
+
+   60 bitwise_shift_expression: bitwise_shift_expression . DEF_LSL add_expression
+   61                         | bitwise_shift_expression . DEF_LSR add_expression
+   62 compare_expression: bitwise_shift_expression .
+
+    DEF_LSR  shift, and go to state 87
+    DEF_LSL  shift, and go to state 88
+
+    $default  reduce using rule 62 (compare_expression)
+
+
+State 53
+
+   63 compare_expression: compare_expression . DEF_SMALLER bitwise_shift_expression
+   64                   | compare_expression . DEF_LEQ bitwise_shift_expression
+   65                   | compare_expression . DEF_LARGER bitwise_shift_expression
+   66                   | compare_expression . DEF_GEQ bitwise_shift_expression
+   67 equal_expression: compare_expression .
+
+    DEF_LARGER   shift, and go to state 89
+    DEF_GEQ      shift, and go to state 90
+    DEF_SMALLER  shift, and go to state 91
+    DEF_LEQ      shift, and go to state 92
+
+    $default  reduce using rule 67 (equal_expression)
+
+
+State 54
+
+   68 equal_expression: equal_expression . DEF_DOUB_EQ compare_expression
+   69                 | equal_expression . DEF_NE compare_expression
+   70 log_bitwise: equal_expression .
+
+    DEF_DOUB_EQ  shift, and go to state 93
+    DEF_NE       shift, and go to state 94
+
+    $default  reduce using rule 70 (log_bitwise)
+
+
+State 55
+
+   71 log_bitwise: log_bitwise . DEF_AND equal_expression
+   72            | log_bitwise . DEF_XOR equal_expression
+   73            | log_bitwise . DEF_OR equal_expression
+   74 parse_l_ANDOR: log_bitwise .
+
+    DEF_AND  shift, and go to state 95
+    DEF_OR   shift, and go to state 96
+    DEF_XOR  shift, and go to state 97
+
+    $default  reduce using rule 74 (parse_l_ANDOR)
+
+
+State 56
+
+   75 parse_l_ANDOR: parse_l_ANDOR . DEF_TWO_AND log_bitwise
+   76              | parse_l_ANDOR . DEF_TWO_OR log_bitwise
+   77 assignment_expression: parse_l_ANDOR .
+
+    DEF_TWO_AND  shift, and go to state 98
+    DEF_TWO_OR   shift, and go to state 99
+
+    $default  reduce using rule 77 (assignment_expression)
+
+
+State 57
+
+   24 declarator: DEF_IDENT DEF_ARR_L assignment_expression . DEF_ARR_R
+
+    DEF_ARR_R  shift, and go to state 100
+
+
+State 58
+
+   46 enumerator_declarator: DEF_IDENT .
+
+    $default  reduce using rule 46 (enumerator_declarator)
+
+
+State 59
+
+   32 enumerator: TYPE DEF_IDENT DEF_OP_FUNC enumerator_list . DEF_CLO_FUNC DEF_END_LINE
+   43 enumerator_list: enumerator_list . DEF_COMM enumerator_initialisation
+
+    DEF_COMM      shift, and go to state 101
+    DEF_CLO_FUNC  shift, and go to state 102
+
+
+State 60
+
+   42 enumerator_list: enumerator_initialisation .
+
+    $default  reduce using rule 42 (enumerator_list)
+
+
+State 61
+
+   44 enumerator_initialisation: enumerator_declarator . DEF_EQ assignment_expression
+   45                          | enumerator_declarator .
+
+    DEF_EQ  shift, and go to state 103
+
+    $default  reduce using rule 45 (enumerator_initialisation)
+
+
+State 62
+
+   27 specify_decl: declarator DEF_EQ DEF_OP_FUNC . DEF_CLO_FUNC
+   28             | declarator DEF_EQ DEF_OP_FUNC . initialisation_list DEF_CLO_FUNC
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_CLO_FUNC   shift, and go to state 104
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    initialisation_list       go to state 105
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 106
+
+
+State 63
+
+   29 specify_decl: declarator DEF_EQ assignment_expression .
+
+    $default  reduce using rule 29 (specify_decl)
+
+
+State 64
+
+   22 declarator: DEF_IDENT .
+   23           | DEF_IDENT . DEF_ARR_L DEF_ARR_R
+   24           | DEF_IDENT . DEF_ARR_L assignment_expression DEF_ARR_R
+   25           | DEF_IDENT . DEF_OP_PAREN parameter_list DEF_CLO_PAREN
+
+    DEF_OP_PAREN  shift, and go to state 107
+    DEF_ARR_L     shift, and go to state 25
+
+    $default  reduce using rule 22 (declarator)
+
+
+State 65
+
+   31 start_dec_list: start_dec_list DEF_COMM specify_decl .
+
+    $default  reduce using rule 31 (start_dec_list)
+
+
+State 66
+
+   11 function_definition: TYPE DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN . compound_statement
+   25 declarator: DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN .
+
+    DEF_OP_FUNC  shift, and go to state 108
+
+    $default  reduce using rule 25 (declarator)
+
+    compound_statement  go to state 109
+
+
+State 67
+
+   20 parameter_list: parameter_list DEF_COMM . parameter_declaration
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_EMPTY       shift, and go to state 7
+
+    parameter_declaration  go to state 110
+    TYPE                   go to state 32
+
+
+State 68
+
+   18 parameter_declaration: TYPE declarator .
+
+    $default  reduce using rule 18 (parameter_declaration)
+
+
+State 69
+
+   39 primary_expression: DEF_OP_PAREN assignment_expression . DEF_CLO_PAREN
+
+    DEF_CLO_PAREN  shift, and go to state 111
+
+
+State 70
+
+   48 unary_expression: DEF_TIMES unary_expression .
+
+    $default  reduce using rule 48 (unary_expression)
+
+
+State 71
+
+   49 unary_expression: DEF_SUB unary_expression .
+
+    $default  reduce using rule 49 (unary_expression)
+
+
+State 72
+
+   51 unary_expression: DEF_PLUS_PLUS unary_expression .
+
+    $default  reduce using rule 51 (unary_expression)
+
+
+State 73
+
+   50 unary_expression: DEF_AND unary_expression .
+
+    $default  reduce using rule 50 (unary_expression)
+
+
+State 74
+
+   40 primary_expression: DEF_SZ DEF_OP_PAREN . TYPE DEF_CLO_PAREN
+   41                   | DEF_SZ DEF_OP_PAREN . DEF_IDENT DEF_CLO_PAREN
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_IDENT       shift, and go to state 112
+    DEF_EMPTY       shift, and go to state 7
+
+    TYPE  go to state 113
+
+
+State 75
+
+   52 unary_expression: DEF_MIN_MIN unary_expression .
+
+    $default  reduce using rule 52 (unary_expression)
+
+
+State 76
+
+    8 postfix_expression: postfix_expression DEF_OP_PAREN . argument_list DEF_CLO_PAREN
+   10                   | postfix_expression DEF_OP_PAREN . DEF_CLO_PAREN
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_CLO_PAREN  shift, and go to state 114
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 115
+    argument_list             go to state 116
+
+
+State 77
+
+    9 postfix_expression: postfix_expression DEF_ARR_L . assignment_expression DEF_ARR_R
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 117
+
+
+State 78
+
+    6 postfix_expression: postfix_expression DEF_PLUS_PLUS .
+
+    $default  reduce using rule 6 (postfix_expression)
+
+
+State 79
+
+    7 postfix_expression: postfix_expression DEF_MIN_MIN .
+
+    $default  reduce using rule 7 (postfix_expression)
+
+
+State 80
+
+   78 assignment_expression: unary_expression DEF_EQ . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 118
+
+
+State 81
+
+   79 assignment_expression: unary_expression DEF_PEQL . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 119
+
+
+State 82
+
+   80 assignment_expression: unary_expression DEF_MEQL . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 120
+
+
+State 83
+
+   54 multiply_expression: multiply_expression DEF_TIMES . unary_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression  go to state 47
+    primary_expression  go to state 48
+    unary_expression    go to state 121
+
+
+State 84
+
+   55 multiply_expression: multiply_expression DEF_FRACT . postfix_expression
+
+    DEF_OP_PAREN  shift, and go to state 33
+    DEF_F_VAL     shift, and go to state 34
+    DEF_I_EL      shift, and go to state 40
+    DEF_D_EL      shift, and go to state 41
+    DEF_U_EL      shift, and go to state 42
+    DEF_CH_EL     shift, and go to state 43
+    DEF_IDENT     shift, and go to state 44
+    DEF_SZ        shift, and go to state 45
+
+    postfix_expression  go to state 122
+    primary_expression  go to state 48
+
+
+State 85
+
+   57 add_expression: add_expression DEF_ADD . multiply_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression   go to state 47
+    primary_expression   go to state 48
+    unary_expression     go to state 123
+    multiply_expression  go to state 124
+
+
+State 86
+
+   58 add_expression: add_expression DEF_SUB . multiply_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression   go to state 47
+    primary_expression   go to state 48
+    unary_expression     go to state 123
+    multiply_expression  go to state 125
+
+
+State 87
+
+   61 bitwise_shift_expression: bitwise_shift_expression DEF_LSR . add_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression   go to state 47
+    primary_expression   go to state 48
+    unary_expression     go to state 123
+    multiply_expression  go to state 50
+    add_expression       go to state 126
+
+
+State 88
+
+   60 bitwise_shift_expression: bitwise_shift_expression DEF_LSL . add_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression   go to state 47
+    primary_expression   go to state 48
+    unary_expression     go to state 123
+    multiply_expression  go to state 50
+    add_expression       go to state 127
+
+
+State 89
+
+   65 compare_expression: compare_expression DEF_LARGER . bitwise_shift_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 128
+
+
+State 90
+
+   66 compare_expression: compare_expression DEF_GEQ . bitwise_shift_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 129
+
+
+State 91
+
+   63 compare_expression: compare_expression DEF_SMALLER . bitwise_shift_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 130
+
+
+State 92
+
+   64 compare_expression: compare_expression DEF_LEQ . bitwise_shift_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 131
+
+
+State 93
+
+   68 equal_expression: equal_expression DEF_DOUB_EQ . compare_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 132
+
+
+State 94
+
+   69 equal_expression: equal_expression DEF_NE . compare_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 133
+
+
+State 95
+
+   71 log_bitwise: log_bitwise DEF_AND . equal_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 134
+
+
+State 96
+
+   73 log_bitwise: log_bitwise DEF_OR . equal_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 135
+
+
+State 97
+
+   72 log_bitwise: log_bitwise DEF_XOR . equal_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 136
+
+
+State 98
+
+   75 parse_l_ANDOR: parse_l_ANDOR DEF_TWO_AND . log_bitwise
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 137
+
+
+State 99
+
+   76 parse_l_ANDOR: parse_l_ANDOR DEF_TWO_OR . log_bitwise
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 123
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 138
+
+
+State 100
+
+   24 declarator: DEF_IDENT DEF_ARR_L assignment_expression DEF_ARR_R .
+
+    $default  reduce using rule 24 (declarator)
+
+
+State 101
+
+   43 enumerator_list: enumerator_list DEF_COMM . enumerator_initialisation
+
+    DEF_IDENT  shift, and go to state 58
+
+    enumerator_initialisation  go to state 139
+    enumerator_declarator      go to state 61
+
+
+State 102
+
+   32 enumerator: TYPE DEF_IDENT DEF_OP_FUNC enumerator_list DEF_CLO_FUNC . DEF_END_LINE
+
+    DEF_END_LINE  shift, and go to state 140
+
+
+State 103
+
+   44 enumerator_initialisation: enumerator_declarator DEF_EQ . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 141
+
+
+State 104
+
+   27 specify_decl: declarator DEF_EQ DEF_OP_FUNC DEF_CLO_FUNC .
+
+    $default  reduce using rule 27 (specify_decl)
+
+
+State 105
+
+   17 initialisation_list: initialisation_list . DEF_COMM assignment_expression
+   28 specify_decl: declarator DEF_EQ DEF_OP_FUNC initialisation_list . DEF_CLO_FUNC
+
+    DEF_COMM      shift, and go to state 142
+    DEF_CLO_FUNC  shift, and go to state 143
+
+
+State 106
+
+   16 initialisation_list: assignment_expression .
+
+    $default  reduce using rule 16 (initialisation_list)
+
+
+State 107
+
+   25 declarator: DEF_IDENT DEF_OP_PAREN . parameter_list DEF_CLO_PAREN
+
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_EMPTY       shift, and go to state 7
+
+    $default  reduce using rule 21 (parameter_list)
+
+    parameter_declaration  go to state 30
+    parameter_list         go to state 144
+    TYPE                   go to state 32
+
+
+State 108
+
+   94 compound_statement: DEF_OP_FUNC . DEF_CLO_FUNC
+   95                   | DEF_OP_FUNC . statement_list DEF_CLO_FUNC
+   96                   | DEF_OP_FUNC . declaration_list DEF_CLO_FUNC
+   97                   | DEF_OP_FUNC . declaration_list statement_list DEF_CLO_FUNC
+
+    DEF_OP_PAREN    shift, and go to state 33
+    DEF_SWT         shift, and go to state 145
+    DEF_F_VAL       shift, and go to state 34
+    DEF_F_OP        shift, and go to state 146
+    DEF_END_LINE    shift, and go to state 147
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_TIMES       shift, and go to state 36
+    DEF_SUB         shift, and go to state 37
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_PLUS_PLUS   shift, and go to state 38
+    DEF_AND         shift, and go to state 39
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_I_EL        shift, and go to state 40
+    DEF_D_EL        shift, and go to state 41
+    DEF_U_EL        shift, and go to state 42
+    DEF_CH_EL       shift, and go to state 43
+    DEF_OP_FUNC     shift, and go to state 108
+    DEF_IF          shift, and go to state 148
+    DEF_WH_OP       shift, and go to state 149
+    DEF_CNT         shift, and go to state 150
+    DEF_B           shift, and go to state 151
+    DEF_R_OP        shift, and go to state 152
+    DEF_NORM        shift, and go to state 153
+    DEF_SEL_STATE   shift, and go to state 154
+    DEF_CLO_FUNC    shift, and go to state 155
+    DEF_IDENT       shift, and go to state 44
+    DEF_SZ          shift, and go to state 45
+    DEF_EMPTY       shift, and go to state 7
+    DEF_MIN_MIN     shift, and go to state 46
+
+    postfix_expression        go to state 47
+    declaration               go to state 156
+    declaration_list          go to state 157
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement_list            go to state 159
+    statement                 go to state 160
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+    TYPE                      go to state 166
+
+
+State 109
+
+   11 function_definition: TYPE DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN compound_statement .
+
+    $default  reduce using rule 11 (function_definition)
+
+
+State 110
+
+   20 parameter_list: parameter_list DEF_COMM parameter_declaration .
+
+    $default  reduce using rule 20 (parameter_list)
+
+
+State 111
+
+   39 primary_expression: DEF_OP_PAREN assignment_expression DEF_CLO_PAREN .
+
+    $default  reduce using rule 39 (primary_expression)
+
+
+State 112
+
+   41 primary_expression: DEF_SZ DEF_OP_PAREN DEF_IDENT . DEF_CLO_PAREN
+
+    DEF_CLO_PAREN  shift, and go to state 167
+
+
+State 113
+
+   40 primary_expression: DEF_SZ DEF_OP_PAREN TYPE . DEF_CLO_PAREN
+  115 TYPE: TYPE . DEF_TIMES
+
+    DEF_CLO_PAREN  shift, and go to state 168
+    DEF_TIMES      shift, and go to state 19
+
+
+State 114
+
+   10 postfix_expression: postfix_expression DEF_OP_PAREN DEF_CLO_PAREN .
+
+    $default  reduce using rule 10 (postfix_expression)
+
+
+State 115
+
+   83 argument_list: assignment_expression .
+
+    $default  reduce using rule 83 (argument_list)
+
+
+State 116
+
+    8 postfix_expression: postfix_expression DEF_OP_PAREN argument_list . DEF_CLO_PAREN
+   84 argument_list: argument_list . DEF_COMM assignment_expression
+
+    DEF_CLO_PAREN  shift, and go to state 169
+    DEF_COMM       shift, and go to state 170
+
+
+State 117
+
+    9 postfix_expression: postfix_expression DEF_ARR_L assignment_expression . DEF_ARR_R
+
+    DEF_ARR_R  shift, and go to state 171
+
+
+State 118
+
+   78 assignment_expression: unary_expression DEF_EQ assignment_expression .
+
+    $default  reduce using rule 78 (assignment_expression)
+
+
+State 119
+
+   79 assignment_expression: unary_expression DEF_PEQL assignment_expression .
+
+    $default  reduce using rule 79 (assignment_expression)
+
+
+State 120
+
+   80 assignment_expression: unary_expression DEF_MEQL assignment_expression .
+
+    $default  reduce using rule 80 (assignment_expression)
+
+
+State 121
+
+   54 multiply_expression: multiply_expression DEF_TIMES unary_expression .
+
+    $default  reduce using rule 54 (multiply_expression)
+
+
+State 122
+
+    6 postfix_expression: postfix_expression . DEF_PLUS_PLUS
+    7                   | postfix_expression . DEF_MIN_MIN
+    8                   | postfix_expression . DEF_OP_PAREN argument_list DEF_CLO_PAREN
+    9                   | postfix_expression . DEF_ARR_L assignment_expression DEF_ARR_R
+   10                   | postfix_expression . DEF_OP_PAREN DEF_CLO_PAREN
+   55 multiply_expression: multiply_expression DEF_FRACT postfix_expression .
+
+    DEF_OP_PAREN   shift, and go to state 76
+    DEF_ARR_L      shift, and go to state 77
+    DEF_PLUS_PLUS  shift, and go to state 78
+    DEF_MIN_MIN    shift, and go to state 79
+
+    $default  reduce using rule 55 (multiply_expression)
+
+
+State 123
+
+   53 multiply_expression: unary_expression .
+
+    $default  reduce using rule 53 (multiply_expression)
+
+
+State 124
+
+   54 multiply_expression: multiply_expression . DEF_TIMES unary_expression
+   55                    | multiply_expression . DEF_FRACT postfix_expression
+   57 add_expression: add_expression DEF_ADD multiply_expression .
+
+    DEF_TIMES  shift, and go to state 83
+    DEF_FRACT  shift, and go to state 84
+
+    $default  reduce using rule 57 (add_expression)
+
+
+State 125
+
+   54 multiply_expression: multiply_expression . DEF_TIMES unary_expression
+   55                    | multiply_expression . DEF_FRACT postfix_expression
+   58 add_expression: add_expression DEF_SUB multiply_expression .
+
+    DEF_TIMES  shift, and go to state 83
+    DEF_FRACT  shift, and go to state 84
+
+    $default  reduce using rule 58 (add_expression)
+
+
+State 126
+
+   57 add_expression: add_expression . DEF_ADD multiply_expression
+   58               | add_expression . DEF_SUB multiply_expression
+   61 bitwise_shift_expression: bitwise_shift_expression DEF_LSR add_expression .
+
+    DEF_ADD  shift, and go to state 85
+    DEF_SUB  shift, and go to state 86
+
+    $default  reduce using rule 61 (bitwise_shift_expression)
+
+
+State 127
+
+   57 add_expression: add_expression . DEF_ADD multiply_expression
+   58               | add_expression . DEF_SUB multiply_expression
+   60 bitwise_shift_expression: bitwise_shift_expression DEF_LSL add_expression .
+
+    DEF_ADD  shift, and go to state 85
+    DEF_SUB  shift, and go to state 86
+
+    $default  reduce using rule 60 (bitwise_shift_expression)
+
+
+State 128
+
+   60 bitwise_shift_expression: bitwise_shift_expression . DEF_LSL add_expression
+   61                         | bitwise_shift_expression . DEF_LSR add_expression
+   65 compare_expression: compare_expression DEF_LARGER bitwise_shift_expression .
+
+    DEF_LSR  shift, and go to state 87
+    DEF_LSL  shift, and go to state 88
+
+    $default  reduce using rule 65 (compare_expression)
+
+
+State 129
+
+   60 bitwise_shift_expression: bitwise_shift_expression . DEF_LSL add_expression
+   61                         | bitwise_shift_expression . DEF_LSR add_expression
+   66 compare_expression: compare_expression DEF_GEQ bitwise_shift_expression .
+
+    DEF_LSR  shift, and go to state 87
+    DEF_LSL  shift, and go to state 88
+
+    $default  reduce using rule 66 (compare_expression)
+
+
+State 130
+
+   60 bitwise_shift_expression: bitwise_shift_expression . DEF_LSL add_expression
+   61                         | bitwise_shift_expression . DEF_LSR add_expression
+   63 compare_expression: compare_expression DEF_SMALLER bitwise_shift_expression .
+
+    DEF_LSR  shift, and go to state 87
+    DEF_LSL  shift, and go to state 88
+
+    $default  reduce using rule 63 (compare_expression)
+
+
+State 131
+
+   60 bitwise_shift_expression: bitwise_shift_expression . DEF_LSL add_expression
+   61                         | bitwise_shift_expression . DEF_LSR add_expression
+   64 compare_expression: compare_expression DEF_LEQ bitwise_shift_expression .
+
+    DEF_LSR  shift, and go to state 87
+    DEF_LSL  shift, and go to state 88
+
+    $default  reduce using rule 64 (compare_expression)
+
+
+State 132
+
+   63 compare_expression: compare_expression . DEF_SMALLER bitwise_shift_expression
+   64                   | compare_expression . DEF_LEQ bitwise_shift_expression
+   65                   | compare_expression . DEF_LARGER bitwise_shift_expression
+   66                   | compare_expression . DEF_GEQ bitwise_shift_expression
+   68 equal_expression: equal_expression DEF_DOUB_EQ compare_expression .
+
+    DEF_LARGER   shift, and go to state 89
+    DEF_GEQ      shift, and go to state 90
+    DEF_SMALLER  shift, and go to state 91
+    DEF_LEQ      shift, and go to state 92
+
+    $default  reduce using rule 68 (equal_expression)
+
+
+State 133
+
+   63 compare_expression: compare_expression . DEF_SMALLER bitwise_shift_expression
+   64                   | compare_expression . DEF_LEQ bitwise_shift_expression
+   65                   | compare_expression . DEF_LARGER bitwise_shift_expression
+   66                   | compare_expression . DEF_GEQ bitwise_shift_expression
+   69 equal_expression: equal_expression DEF_NE compare_expression .
+
+    DEF_LARGER   shift, and go to state 89
+    DEF_GEQ      shift, and go to state 90
+    DEF_SMALLER  shift, and go to state 91
+    DEF_LEQ      shift, and go to state 92
+
+    $default  reduce using rule 69 (equal_expression)
+
+
+State 134
+
+   68 equal_expression: equal_expression . DEF_DOUB_EQ compare_expression
+   69                 | equal_expression . DEF_NE compare_expression
+   71 log_bitwise: log_bitwise DEF_AND equal_expression .
+
+    DEF_DOUB_EQ  shift, and go to state 93
+    DEF_NE       shift, and go to state 94
+
+    $default  reduce using rule 71 (log_bitwise)
+
+
+State 135
+
+   68 equal_expression: equal_expression . DEF_DOUB_EQ compare_expression
+   69                 | equal_expression . DEF_NE compare_expression
+   73 log_bitwise: log_bitwise DEF_OR equal_expression .
+
+    DEF_DOUB_EQ  shift, and go to state 93
+    DEF_NE       shift, and go to state 94
+
+    $default  reduce using rule 73 (log_bitwise)
+
+
+State 136
+
+   68 equal_expression: equal_expression . DEF_DOUB_EQ compare_expression
+   69                 | equal_expression . DEF_NE compare_expression
+   72 log_bitwise: log_bitwise DEF_XOR equal_expression .
+
+    DEF_DOUB_EQ  shift, and go to state 93
+    DEF_NE       shift, and go to state 94
+
+    $default  reduce using rule 72 (log_bitwise)
+
+
+State 137
+
+   71 log_bitwise: log_bitwise . DEF_AND equal_expression
+   72            | log_bitwise . DEF_XOR equal_expression
+   73            | log_bitwise . DEF_OR equal_expression
+   75 parse_l_ANDOR: parse_l_ANDOR DEF_TWO_AND log_bitwise .
+
+    DEF_AND  shift, and go to state 95
+    DEF_OR   shift, and go to state 96
+    DEF_XOR  shift, and go to state 97
+
+    $default  reduce using rule 75 (parse_l_ANDOR)
+
+
+State 138
+
+   71 log_bitwise: log_bitwise . DEF_AND equal_expression
+   72            | log_bitwise . DEF_XOR equal_expression
+   73            | log_bitwise . DEF_OR equal_expression
+   76 parse_l_ANDOR: parse_l_ANDOR DEF_TWO_OR log_bitwise .
+
+    DEF_AND  shift, and go to state 95
+    DEF_OR   shift, and go to state 96
+    DEF_XOR  shift, and go to state 97
+
+    $default  reduce using rule 76 (parse_l_ANDOR)
+
+
+State 139
+
+   43 enumerator_list: enumerator_list DEF_COMM enumerator_initialisation .
+
+    $default  reduce using rule 43 (enumerator_list)
+
+
+State 140
+
+   32 enumerator: TYPE DEF_IDENT DEF_OP_FUNC enumerator_list DEF_CLO_FUNC DEF_END_LINE .
+
+    $default  reduce using rule 32 (enumerator)
+
+
+State 141
+
+   44 enumerator_initialisation: enumerator_declarator DEF_EQ assignment_expression .
+
+    $default  reduce using rule 44 (enumerator_initialisation)
+
+
+State 142
+
+   17 initialisation_list: initialisation_list DEF_COMM . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 172
+
+
+State 143
+
+   28 specify_decl: declarator DEF_EQ DEF_OP_FUNC initialisation_list DEF_CLO_FUNC .
+
+    $default  reduce using rule 28 (specify_decl)
+
+
+State 144
+
+   20 parameter_list: parameter_list . DEF_COMM parameter_declaration
+   25 declarator: DEF_IDENT DEF_OP_PAREN parameter_list . DEF_CLO_PAREN
+
+    DEF_CLO_PAREN  shift, and go to state 173
+    DEF_COMM       shift, and go to state 67
+
+
+State 145
+
+  104 control_flow_logic: DEF_SWT . DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN  shift, and go to state 174
+
+
+State 146
+
+  106 control_flow_logic: DEF_F_OP . DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN  shift, and go to state 175
+
+
+State 147
+
+  101 expression_statement: DEF_END_LINE .
+
+    $default  reduce using rule 101 (expression_statement)
+
+
+State 148
+
+  102 control_flow_logic: DEF_IF . DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+  103                   | DEF_IF . DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement DEF_ELS statement
+
+    DEF_OP_PAREN  shift, and go to state 176
+
+
+State 149
+
+  105 control_flow_logic: DEF_WH_OP . DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN  shift, and go to state 177
+
+
+State 150
+
+   92 jump_statement: DEF_CNT . DEF_END_LINE
+
+    DEF_END_LINE  shift, and go to state 178
+
+
+State 151
+
+   91 jump_statement: DEF_B . DEF_END_LINE
+
+    DEF_END_LINE  shift, and go to state 179
+
+
+State 152
+
+   90 jump_statement: DEF_R_OP . DEF_END_LINE
+   93               | DEF_R_OP . assignment_expression DEF_END_LINE
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_END_LINE   shift, and go to state 180
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 181
+
+
+State 153
+
+  108 labeled_statement: DEF_NORM . DEF_COL statement
+
+    DEF_COL  shift, and go to state 182
+
+
+State 154
+
+  107 labeled_statement: DEF_SEL_STATE . assignment_expression DEF_COL statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 183
+
+
+State 155
+
+   94 compound_statement: DEF_OP_FUNC DEF_CLO_FUNC .
+
+    $default  reduce using rule 94 (compound_statement)
+
+
+State 156
+
+   14 declaration_list: declaration .
+
+    $default  reduce using rule 14 (declaration_list)
+
+
+State 157
+
+   15 declaration_list: declaration_list . declaration
+   96 compound_statement: DEF_OP_FUNC declaration_list . DEF_CLO_FUNC
+   97                   | DEF_OP_FUNC declaration_list . statement_list DEF_CLO_FUNC
+
+    DEF_OP_PAREN    shift, and go to state 33
+    DEF_SWT         shift, and go to state 145
+    DEF_F_VAL       shift, and go to state 34
+    DEF_F_OP        shift, and go to state 146
+    DEF_END_LINE    shift, and go to state 147
+    DEF_FLT         shift, and go to state 1
+    DEF_INT         shift, and go to state 2
+    DEF_TIMES       shift, and go to state 36
+    DEF_SUB         shift, and go to state 37
+    DEF_NUMBER      shift, and go to state 3
+    DEF_LETTER      shift, and go to state 4
+    DEF_UNS         shift, and go to state 5
+    DEF_PLUS_PLUS   shift, and go to state 38
+    DEF_AND         shift, and go to state 39
+    DEF_ENUMERATOR  shift, and go to state 6
+    DEF_I_EL        shift, and go to state 40
+    DEF_D_EL        shift, and go to state 41
+    DEF_U_EL        shift, and go to state 42
+    DEF_CH_EL       shift, and go to state 43
+    DEF_OP_FUNC     shift, and go to state 108
+    DEF_IF          shift, and go to state 148
+    DEF_WH_OP       shift, and go to state 149
+    DEF_CNT         shift, and go to state 150
+    DEF_B           shift, and go to state 151
+    DEF_R_OP        shift, and go to state 152
+    DEF_NORM        shift, and go to state 153
+    DEF_SEL_STATE   shift, and go to state 154
+    DEF_CLO_FUNC    shift, and go to state 184
+    DEF_IDENT       shift, and go to state 44
+    DEF_SZ          shift, and go to state 45
+    DEF_EMPTY       shift, and go to state 7
+    DEF_MIN_MIN     shift, and go to state 46
+
+    postfix_expression        go to state 47
+    declaration               go to state 185
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement_list            go to state 186
+    statement                 go to state 160
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+    TYPE                      go to state 166
+
+
+State 158
+
+  100 expression_statement: assignment_expression . DEF_END_LINE
+
+    DEF_END_LINE  shift, and go to state 187
+
+
+State 159
+
+   82 statement_list: statement_list . statement
+   95 compound_statement: DEF_OP_FUNC statement_list . DEF_CLO_FUNC
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_CLO_FUNC   shift, and go to state 188
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 189
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 160
+
+   81 statement_list: statement .
+
+    $default  reduce using rule 81 (statement_list)
+
+
+State 161
+
+   85 statement: jump_statement .
+
+    $default  reduce using rule 85 (statement)
+
+
+State 162
+
+   86 statement: compound_statement .
+
+    $default  reduce using rule 86 (statement)
+
+
+State 163
+
+   87 statement: expression_statement .
+
+    $default  reduce using rule 87 (statement)
+
+
+State 164
+
+   88 statement: control_flow_logic .
+
+    $default  reduce using rule 88 (statement)
+
+
+State 165
+
+   89 statement: labeled_statement .
+
+    $default  reduce using rule 89 (statement)
+
+
+State 166
+
+   12 declaration: TYPE . DEF_END_LINE
+   13            | TYPE . start_dec_list DEF_END_LINE
+  115 TYPE: TYPE . DEF_TIMES
+
+    DEF_END_LINE  shift, and go to state 18
+    DEF_TIMES     shift, and go to state 19
+    DEF_IDENT     shift, and go to state 64
+
+    declarator      go to state 21
+    specify_decl    go to state 22
+    start_dec_list  go to state 23
+
+
+State 167
+
+   41 primary_expression: DEF_SZ DEF_OP_PAREN DEF_IDENT DEF_CLO_PAREN .
+
+    $default  reduce using rule 41 (primary_expression)
+
+
+State 168
+
+   40 primary_expression: DEF_SZ DEF_OP_PAREN TYPE DEF_CLO_PAREN .
+
+    $default  reduce using rule 40 (primary_expression)
+
+
+State 169
+
+    8 postfix_expression: postfix_expression DEF_OP_PAREN argument_list DEF_CLO_PAREN .
+
+    $default  reduce using rule 8 (postfix_expression)
+
+
+State 170
+
+   84 argument_list: argument_list DEF_COMM . assignment_expression
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 190
+
+
+State 171
+
+    9 postfix_expression: postfix_expression DEF_ARR_L assignment_expression DEF_ARR_R .
+
+    $default  reduce using rule 9 (postfix_expression)
+
+
+State 172
+
+   17 initialisation_list: initialisation_list DEF_COMM assignment_expression .
+
+    $default  reduce using rule 17 (initialisation_list)
+
+
+State 173
+
+   25 declarator: DEF_IDENT DEF_OP_PAREN parameter_list DEF_CLO_PAREN .
+
+    $default  reduce using rule 25 (declarator)
+
+
+State 174
+
+  104 control_flow_logic: DEF_SWT DEF_OP_PAREN . assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 191
+
+
+State 175
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN . assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 192
+
+
+State 176
+
+  102 control_flow_logic: DEF_IF DEF_OP_PAREN . assignment_expression DEF_CLO_PAREN statement
+  103                   | DEF_IF DEF_OP_PAREN . assignment_expression DEF_CLO_PAREN statement DEF_ELS statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 193
+
+
+State 177
+
+  105 control_flow_logic: DEF_WH_OP DEF_OP_PAREN . assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 194
+
+
+State 178
+
+   92 jump_statement: DEF_CNT DEF_END_LINE .
+
+    $default  reduce using rule 92 (jump_statement)
+
+
+State 179
+
+   91 jump_statement: DEF_B DEF_END_LINE .
+
+    $default  reduce using rule 91 (jump_statement)
+
+
+State 180
+
+   90 jump_statement: DEF_R_OP DEF_END_LINE .
+
+    $default  reduce using rule 90 (jump_statement)
+
+
+State 181
+
+   93 jump_statement: DEF_R_OP assignment_expression . DEF_END_LINE
+
+    DEF_END_LINE  shift, and go to state 195
+
+
+State 182
+
+  108 labeled_statement: DEF_NORM DEF_COL . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 196
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 183
+
+  107 labeled_statement: DEF_SEL_STATE assignment_expression . DEF_COL statement
+
+    DEF_COL  shift, and go to state 197
+
+
+State 184
+
+   96 compound_statement: DEF_OP_FUNC declaration_list DEF_CLO_FUNC .
+
+    $default  reduce using rule 96 (compound_statement)
+
+
+State 185
+
+   15 declaration_list: declaration_list declaration .
+
+    $default  reduce using rule 15 (declaration_list)
+
+
+State 186
+
+   82 statement_list: statement_list . statement
+   97 compound_statement: DEF_OP_FUNC declaration_list statement_list . DEF_CLO_FUNC
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_CLO_FUNC   shift, and go to state 198
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 189
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 187
+
+  100 expression_statement: assignment_expression DEF_END_LINE .
+
+    $default  reduce using rule 100 (expression_statement)
+
+
+State 188
+
+   95 compound_statement: DEF_OP_FUNC statement_list DEF_CLO_FUNC .
+
+    $default  reduce using rule 95 (compound_statement)
+
+
+State 189
+
+   82 statement_list: statement_list statement .
+
+    $default  reduce using rule 82 (statement_list)
+
+
+State 190
+
+   84 argument_list: argument_list DEF_COMM assignment_expression .
+
+    $default  reduce using rule 84 (argument_list)
+
+
+State 191
+
+  104 control_flow_logic: DEF_SWT DEF_OP_PAREN assignment_expression . DEF_CLO_PAREN statement
+
+    DEF_CLO_PAREN  shift, and go to state 199
+
+
+State 192
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression . DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+    DEF_END_LINE  shift, and go to state 200
+
+
+State 193
+
+  102 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression . DEF_CLO_PAREN statement
+  103                   | DEF_IF DEF_OP_PAREN assignment_expression . DEF_CLO_PAREN statement DEF_ELS statement
+
+    DEF_CLO_PAREN  shift, and go to state 201
+
+
+State 194
+
+  105 control_flow_logic: DEF_WH_OP DEF_OP_PAREN assignment_expression . DEF_CLO_PAREN statement
+
+    DEF_CLO_PAREN  shift, and go to state 202
+
+
+State 195
+
+   93 jump_statement: DEF_R_OP assignment_expression DEF_END_LINE .
+
+    $default  reduce using rule 93 (jump_statement)
+
+
+State 196
+
+  108 labeled_statement: DEF_NORM DEF_COL statement .
+
+    $default  reduce using rule 108 (labeled_statement)
+
+
+State 197
+
+  107 labeled_statement: DEF_SEL_STATE assignment_expression DEF_COL . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 203
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 198
+
+   97 compound_statement: DEF_OP_FUNC declaration_list statement_list DEF_CLO_FUNC .
+
+    $default  reduce using rule 97 (compound_statement)
+
+
+State 199
+
+  104 control_flow_logic: DEF_SWT DEF_OP_PAREN assignment_expression DEF_CLO_PAREN . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 204
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 200
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE . assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 205
+
+
+State 201
+
+  102 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN . statement
+  103                   | DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN . statement DEF_ELS statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 206
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 202
+
+  105 control_flow_logic: DEF_WH_OP DEF_OP_PAREN assignment_expression DEF_CLO_PAREN . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 207
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 203
+
+  107 labeled_statement: DEF_SEL_STATE assignment_expression DEF_COL statement .
+
+    $default  reduce using rule 107 (labeled_statement)
+
+
+State 204
+
+  104 control_flow_logic: DEF_SWT DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement .
+
+    $default  reduce using rule 104 (control_flow_logic)
+
+
+State 205
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression . DEF_END_LINE assignment_expression DEF_CLO_PAREN statement
+
+    DEF_END_LINE  shift, and go to state 208
+
+
+State 206
+
+  102 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement .
+  103                   | DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement . DEF_ELS statement
+
+    DEF_ELS  shift, and go to state 209
+
+    DEF_ELS   [reduce using rule 102 (control_flow_logic)]
+    $default  reduce using rule 102 (control_flow_logic)
+
+
+State 207
+
+  105 control_flow_logic: DEF_WH_OP DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement .
+
+    $default  reduce using rule 105 (control_flow_logic)
+
+
+State 208
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE . assignment_expression DEF_CLO_PAREN statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_F_VAL      shift, and go to state 34
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 210
+
+
+State 209
+
+  103 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement DEF_ELS . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 211
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 210
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression . DEF_CLO_PAREN statement
+
+    DEF_CLO_PAREN  shift, and go to state 212
+
+
+State 211
+
+  103 control_flow_logic: DEF_IF DEF_OP_PAREN assignment_expression DEF_CLO_PAREN statement DEF_ELS statement .
+
+    $default  reduce using rule 103 (control_flow_logic)
+
+
+State 212
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN . statement
+
+    DEF_OP_PAREN   shift, and go to state 33
+    DEF_SWT        shift, and go to state 145
+    DEF_F_VAL      shift, and go to state 34
+    DEF_F_OP       shift, and go to state 146
+    DEF_END_LINE   shift, and go to state 147
+    DEF_TIMES      shift, and go to state 36
+    DEF_SUB        shift, and go to state 37
+    DEF_PLUS_PLUS  shift, and go to state 38
+    DEF_AND        shift, and go to state 39
+    DEF_I_EL       shift, and go to state 40
+    DEF_D_EL       shift, and go to state 41
+    DEF_U_EL       shift, and go to state 42
+    DEF_CH_EL      shift, and go to state 43
+    DEF_OP_FUNC    shift, and go to state 108
+    DEF_IF         shift, and go to state 148
+    DEF_WH_OP      shift, and go to state 149
+    DEF_CNT        shift, and go to state 150
+    DEF_B          shift, and go to state 151
+    DEF_R_OP       shift, and go to state 152
+    DEF_NORM       shift, and go to state 153
+    DEF_SEL_STATE  shift, and go to state 154
+    DEF_IDENT      shift, and go to state 44
+    DEF_SZ         shift, and go to state 45
+    DEF_MIN_MIN    shift, and go to state 46
+
+    postfix_expression        go to state 47
+    primary_expression        go to state 48
+    unary_expression          go to state 49
+    multiply_expression       go to state 50
+    add_expression            go to state 51
+    bitwise_shift_expression  go to state 52
+    compare_expression        go to state 53
+    equal_expression          go to state 54
+    log_bitwise               go to state 55
+    parse_l_ANDOR             go to state 56
+    assignment_expression     go to state 158
+    statement                 go to state 213
+    jump_statement            go to state 161
+    compound_statement        go to state 162
+    expression_statement      go to state 163
+    control_flow_logic        go to state 164
+    labeled_statement         go to state 165
+
+
+State 213
+
+  106 control_flow_logic: DEF_F_OP DEF_OP_PAREN assignment_expression DEF_END_LINE assignment_expression DEF_END_LINE assignment_expression DEF_CLO_PAREN statement .
+
+    $default  reduce using rule 106 (control_flow_logic)
